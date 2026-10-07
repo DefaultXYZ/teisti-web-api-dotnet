@@ -209,3 +209,6 @@ FakesAssemblies/
 # JetBrains Rider
 *.sln.iml
 .idea/
+
+# Claude Code personal settings
+.claude/settings.local.json
