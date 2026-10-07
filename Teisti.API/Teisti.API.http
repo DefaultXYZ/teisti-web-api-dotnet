@@ -1,0 +1,13 @@
+@Teisti_HostAddress = http://localhost:5018
+
+GET {{Teisti_HostAddress}}/Food/
+Accept: application/json
+
+###
+
+POST {{Teisti_HostAddress}}/Food/
+Content-Type: application/json
+
+{
+  "Name": "Test"
+}
