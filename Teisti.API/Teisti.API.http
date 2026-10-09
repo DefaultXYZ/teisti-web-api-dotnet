@@ -1,13 +1,21 @@
 @Teisti_HostAddress = http://localhost:5018
 
-GET {{Teisti_HostAddress}}/Food/
+### GET Initial Products
+
+GET {{Teisti_HostAddress}}/products/
 Accept: application/json
 
-###
+### POST New Product
 
-POST {{Teisti_HostAddress}}/Food/
+POST {{Teisti_HostAddress}}/products/
 Content-Type: application/json
 
 {
-  "Name": "Test"
+  "name": "Sushi",
+  "price": 41.3
 }
+
+### GET All Products
+
+GET {{Teisti_HostAddress}}/products/
+Accept: application/json

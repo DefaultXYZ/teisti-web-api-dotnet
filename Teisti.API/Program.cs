@@ -10,10 +10,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.SetupSwagger();
 }
 
 app.UseHttpsRedirection();
-
-FoodEndpoint.UseFoodEndpoint(app);
-
+app.MapProductsEndpoint();
 app.Run();
