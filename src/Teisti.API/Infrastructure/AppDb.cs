@@ -1,4 +1,4 @@
-namespace Teisti.API;
+namespace Teisti.API.Infrastructure;
 
 public class AppDb
 {

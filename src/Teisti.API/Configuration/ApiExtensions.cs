@@ -1,4 +1,6 @@
-namespace Teisti.API;
+using Teisti.API.Infrastructure;
+
+namespace Teisti.API.Configuration;
 
 public static class ApiExtensions
 {

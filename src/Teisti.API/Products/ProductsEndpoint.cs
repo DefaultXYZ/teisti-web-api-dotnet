@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Teisti.API.Infrastructure;
 
-namespace Teisti.API;
+namespace Teisti.API.Products;
 
 public static class ProductsEndpoint
 {

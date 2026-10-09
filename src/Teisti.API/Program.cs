@@ -1,4 +1,5 @@
-using Teisti.API;
+using Teisti.API.Configuration;
+using Teisti.API.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 
