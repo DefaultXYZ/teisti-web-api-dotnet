@@ -6,7 +6,8 @@ public static class ProductsEndpoint
 {
     public static void MapProductsEndpoint(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/products").WithTags("Products");
+        var group = app.MapGroup("/products")
+            .WithTags("Products");
         group.MapGet("/", GetProducts)
             .WithName(nameof(GetProducts));
         group.MapGet("/{id:guid}", GetProductById)
@@ -23,7 +24,9 @@ public static class ProductsEndpoint
     }
 
     private static async Task<Results<Ok<ProductResponse>, NotFound>> GetProductById(
-        Guid id, AppDb db, CancellationToken cancellationToken)
+        Guid id,
+        AppDb db,
+        CancellationToken cancellationToken)
     {
         await Task.Delay(200, cancellationToken);
         var product = db.Products.FirstOrDefault(product => product.Id == id);
@@ -31,24 +34,22 @@ public static class ProductsEndpoint
     }
 
     private static async Task<CreatedAtRoute<ProductResponse>> PostNewProduct(
-        CreateProductRequest request, AppDb db, CancellationToken cancellationToken)
+        CreateProductRequest request,
+        AppDb db,
+        CancellationToken cancellationToken)
     {
         await Task.Delay(200, cancellationToken);
         var insertedProduct = db.AddNewProduct(request.Name, request.Price);
-        return TypedResults.CreatedAtRoute(insertedProduct.ToResponse(), nameof(GetProductById), new { id = insertedProduct.Id });
+        return TypedResults.CreatedAtRoute(
+            insertedProduct.ToResponse(),
+            nameof(GetProductById),
+            new { id = insertedProduct.Id });
     }
 }
 
-public record ProductResponse(
-    Guid Id,
-    string Name,
-    decimal Price
-);
+public record ProductResponse(Guid Id, string Name, decimal Price);
 
-public record CreateProductRequest(
-    string Name,
-    decimal Price
-);
+public record CreateProductRequest(string Name, decimal Price);
 
 public static class ProductExtensions
 {

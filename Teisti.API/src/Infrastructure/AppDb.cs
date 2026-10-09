@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Teisti.API;
 
 public class AppDb
@@ -38,6 +36,6 @@ public class AppDb
 public class Product
 {
     public Guid Id { get; init; }
-    public string Name { get; init; }
+    public required string Name { get; init; }
     public decimal Price { get; init; }
 }
