@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="src/Teisti.API/Teisti.API.csproj" />
+  <Project Path="src/Teisti.Application/Teisti.Application.csproj" />
+  <Project Path="src/Teisti.Domain/Teisti.Domain.csproj" />
+  <Project Path="src/Teisti.Infrastructure/Teisti.Infrastructure.csproj" />
 </Solution>
