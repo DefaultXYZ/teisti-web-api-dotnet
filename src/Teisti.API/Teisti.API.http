@@ -11,8 +11,8 @@ POST {{Teisti_HostAddress}}/products/
 Content-Type: application/json
 
 {
-  "name": "Sushi",
-  "price": 41.3
+    "name": "Sushi",
+    "price": 41.3
 }
 
 ### GET All Products

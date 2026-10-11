@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using Teisti.API.Infrastructure;
+using Teisti.API.Extensions;
+using Teisti.API.Models;
+using Teisti.Application.Database;
 
-namespace Teisti.API.Products;
+namespace Teisti.API.Endpoints;
 
 public static class ProductsEndpoint
 {
@@ -17,45 +19,37 @@ public static class ProductsEndpoint
             .WithName(nameof(PostNewProduct));
     }
 
-    private static async Task<Ok<List<ProductResponse>>> GetProducts(AppDb db, CancellationToken cancellationToken)
+    private static async Task<Ok<List<ProductResponse>>> GetProducts(
+        IAppDbContext dbContext,
+        CancellationToken cancellationToken)
     {
         await Task.Delay(200, cancellationToken);
-        var productResponses = db.Products.Select(product => product.ToResponse()).ToList();
+        var products = await dbContext.LoadProductsAsync();
+        var productResponses = products.Select(product => product.ToResponse()).ToList();
         return TypedResults.Ok(productResponses);
     }
 
     private static async Task<Results<Ok<ProductResponse>, NotFound>> GetProductById(
         Guid id,
-        AppDb db,
+        IAppDbContext dbContext,
         CancellationToken cancellationToken)
     {
         await Task.Delay(200, cancellationToken);
-        var product = db.Products.FirstOrDefault(product => product.Id == id);
+        var products = await dbContext.LoadProductsAsync();
+        var product = products.FirstOrDefault(product => product.Id == id);
         return product is null ? TypedResults.NotFound() : TypedResults.Ok(product.ToResponse());
     }
 
     private static async Task<CreatedAtRoute<ProductResponse>> PostNewProduct(
         CreateProductRequest request,
-        AppDb db,
+        IAppDbContext dbContext,
         CancellationToken cancellationToken)
     {
         await Task.Delay(200, cancellationToken);
-        var insertedProduct = db.AddNewProduct(request.Name, request.Price);
+        var insertedProduct = await dbContext.AddNewProductAsync(request.Name, request.Price);
         return TypedResults.CreatedAtRoute(
             insertedProduct.ToResponse(),
             nameof(GetProductById),
             new { id = insertedProduct.Id });
-    }
-}
-
-public record ProductResponse(Guid Id, string Name, decimal Price);
-
-public record CreateProductRequest(string Name, decimal Price);
-
-public static class ProductExtensions
-{
-    public static ProductResponse ToResponse(this Product product)
-    {
-        return new ProductResponse(product.Id, product.Name, product.Price);
     }
 }

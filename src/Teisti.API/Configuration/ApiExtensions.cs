@@ -1,12 +1,9 @@
-using Teisti.API.Infrastructure;
-
 namespace Teisti.API.Configuration;
 
 public static class ApiExtensions
 {
     public static IServiceCollection AddEndpoints(this IServiceCollection services)
     {
-        services.AddSingleton<AppDb>();
         return services;
     }
 
