@@ -1,25 +1,30 @@
+using Microsoft.EntityFrameworkCore;
 using Teisti.Application.Database;
 using Teisti.Domain.Models;
 
 namespace Teisti.Infrastructure.Database;
 
-public class ApplicationDbContext : IAppDbContext
+internal class ApplicationDbContext(
+    DbContextOptions options) : DbContext(options), IProductsDbContext
 {
-    private readonly List<Product> _products =
-    [
-        Product.Create("Pizza", 12.4m),
-        Product.Create("Burger", 6.5m)
-    ];
+    public const string DbName = "db_teisti";
 
-    public async Task<List<Product>> LoadProductsAsync()
+    public DbSet<Product> Products => Set<Product>();
+
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        return _products;
+        // TODO Remove this once real database is setup
+        await Products.AddRangeAsync(
+            [
+                Product.Create("Pizza", 12.4m),
+                Product.Create("Burger", 6.5m)
+            ],
+            cancellationToken: cancellationToken);
+        await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<Product> AddNewProductAsync(string name, decimal price)
+    public async Task ApplyChangesAsync(CancellationToken cancellationToken = default)
     {
-        var newProduct = Product.Create(name, price);
-        _products.Add(newProduct);
-        return newProduct;
+        await SaveChangesAsync(cancellationToken);
     }
 }

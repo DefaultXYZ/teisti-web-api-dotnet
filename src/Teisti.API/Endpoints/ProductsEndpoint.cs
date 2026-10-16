@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Teisti.API.Extensions;
 using Teisti.API.Models;
-using Teisti.Application.Database;
+using Teisti.Application.Products;
 
 namespace Teisti.API.Endpoints;
 
@@ -20,33 +20,31 @@ public static class ProductsEndpoint
     }
 
     private static async Task<Ok<List<ProductResponse>>> GetProducts(
-        IAppDbContext dbContext,
+        GetAllProductsQueryHandler handler,
         CancellationToken cancellationToken)
     {
-        await Task.Delay(200, cancellationToken);
-        var products = await dbContext.LoadProductsAsync();
+        var products = await handler.HandleAsync(new GetAllProductsQuery(), cancellationToken);
         var productResponses = products.Select(product => product.ToResponse()).ToList();
         return TypedResults.Ok(productResponses);
     }
 
     private static async Task<Results<Ok<ProductResponse>, NotFound>> GetProductById(
         Guid id,
-        IAppDbContext dbContext,
+        GetProductByIdQueryHandler handler,
         CancellationToken cancellationToken)
     {
-        await Task.Delay(200, cancellationToken);
-        var products = await dbContext.LoadProductsAsync();
-        var product = products.FirstOrDefault(product => product.Id == id);
+        var product = await handler.HandleAsync(new GetProductByIdQuery(id), cancellationToken);
         return product is null ? TypedResults.NotFound() : TypedResults.Ok(product.ToResponse());
     }
 
     private static async Task<CreatedAtRoute<ProductResponse>> PostNewProduct(
         CreateProductRequest request,
-        IAppDbContext dbContext,
+        CreateProductCommandHandler handler,
         CancellationToken cancellationToken)
     {
-        await Task.Delay(200, cancellationToken);
-        var insertedProduct = await dbContext.AddNewProductAsync(request.Name, request.Price);
+        var insertedProduct = await handler.HandleAsync(
+            new CreateProductCommand(request.Name, request.Price),
+            cancellationToken);
         return TypedResults.CreatedAtRoute(
             insertedProduct.ToResponse(),
             nameof(GetProductById),
