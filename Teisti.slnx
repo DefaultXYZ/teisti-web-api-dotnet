@@ -3,4 +3,5 @@
   <Project Path="src/Teisti.Application/Teisti.Application.csproj" />
   <Project Path="src/Teisti.Domain/Teisti.Domain.csproj" />
   <Project Path="src/Teisti.Infrastructure/Teisti.Infrastructure.csproj" />
+  <Project Path="test/Teisti.Application.Test/Teisti.Application.Test.csproj" />
 </Solution>
