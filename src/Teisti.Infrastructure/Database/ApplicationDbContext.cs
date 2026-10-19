@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Teisti.Application.Database;
 using Teisti.Domain.Models;
+using Teisti.Domain.Providers;
 
 namespace Teisti.Infrastructure.Database;
 
 internal class ApplicationDbContext(
-    DbContextOptions options) : DbContext(options), IProductsDbContext
+    DbContextOptions options,
+    IIdProvider idProvider) : DbContext(options), IProductsDbContext
 {
     public const string DbName = "db_teisti";
 
@@ -16,8 +18,8 @@ internal class ApplicationDbContext(
         // TODO Remove this once real database is setup
         await Products.AddRangeAsync(
             [
-                Product.Create("Pizza", 12.4m),
-                Product.Create("Burger", 6.5m)
+                new Product(idProvider.NewId(), "Pizza", 12.4m),
+                new Product(idProvider.NewId(), "Burger", 6.5m)
             ],
             cancellationToken: cancellationToken);
         await SaveChangesAsync(cancellationToken);

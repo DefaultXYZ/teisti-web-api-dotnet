@@ -5,11 +5,10 @@ using Teisti.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-
-builder.Services.AddInfrastructure();
-builder.Services.AddApplication();
-builder.Services.AddEndpoints();
+builder.Services.AddOpenApi()
+    .AddInfrastructure()
+    .AddApplication()
+    .AddEndpoints();
 
 var app = builder.Build();
 

@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Teisti.Application.Database;
+using Teisti.Domain.Providers;
 using Teisti.Infrastructure.Database;
+using Teisti.Infrastructure.Providers;
 
 namespace Teisti.Infrastructure.Configuration;
 
@@ -11,6 +13,7 @@ public static class InfrastructureExtensions
     {
         services.AddDbContext<ApplicationDbContext>(builder =>
             builder.UseInMemoryDatabase(ApplicationDbContext.DbName));
+        services.AddScoped<IIdProvider, IdProvider>();
         services.AddScoped<IProductsDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         return services;
     }

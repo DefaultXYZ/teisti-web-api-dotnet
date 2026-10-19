@@ -27,8 +27,8 @@ public class GetAllProductsQueryHandlerTest
         // Arrange
         var expected = new List<Product>
         {
-            Product.Create("Test1", 1.2m),
-            Product.Create("Test2", 4.5m)
+            new(Guid.NewGuid(), "Test1", 1.2m),
+            new(Guid.NewGuid(), "Test2", 4.5m)
         };
         var mockedProductDbSet = expected.BuildMockDbSet();
         _productsDbContext.Products.Returns(mockedProductDbSet);
