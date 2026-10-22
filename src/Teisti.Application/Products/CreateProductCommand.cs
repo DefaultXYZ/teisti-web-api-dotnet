@@ -16,8 +16,8 @@ public class CreateProductCommandHandler(
         CancellationToken cancellationToken = default)
     {
         var product = new Product(idProvider.NewId(), command.Name, command.Price);
-        var createdProduct = await productsDbContext.Products.AddAsync(product, cancellationToken);
+        await productsDbContext.Products.AddAsync(product, cancellationToken);
         await productsDbContext.ApplyChangesAsync(cancellationToken);
-        return createdProduct.Entity;
+        return product;
     }
 }

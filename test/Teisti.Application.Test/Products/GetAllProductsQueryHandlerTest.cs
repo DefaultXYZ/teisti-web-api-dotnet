@@ -9,7 +9,7 @@ namespace Teisti.Application.Test.Products;
 [TestClass]
 public class GetAllProductsQueryHandlerTest
 {
-    public TestContext TestContext { get; set; } = null!;
+    public TestContext TestContext { get; set; }
 
     private IProductsDbContext _productsDbContext = null!;
     private GetAllProductsQueryHandler _handler = null!;
