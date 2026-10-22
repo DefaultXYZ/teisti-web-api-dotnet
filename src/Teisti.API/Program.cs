@@ -6,6 +6,7 @@ using Teisti.Infrastructure.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi()
+    .AddValidation()
     .AddInfrastructure()
     .AddApplication()
     .AddEndpoints();
