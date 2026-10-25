@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi()
     .AddValidation()
-    .AddInfrastructure()
+    .AddInfrastructure(builder.Configuration)
     .AddApplication()
     .AddEndpoints();
 

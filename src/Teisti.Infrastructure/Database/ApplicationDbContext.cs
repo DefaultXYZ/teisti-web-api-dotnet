@@ -2,15 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Teisti.Application.Database;
 using Teisti.Domain.Models;
 using Teisti.Domain.Providers;
+using Teisti.Infrastructure.Database.Configurations;
 
 namespace Teisti.Infrastructure.Database;
 
 internal class ApplicationDbContext(
-    DbContextOptions options,
+    DbContextOptions<ApplicationDbContext> options,
     IIdProvider idProvider) : DbContext(options), IProductsDbContext
 {
-    public const string DbName = "db_teisti";
-
     public DbSet<Product> Products => Set<Product>();
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -23,6 +22,11 @@ internal class ApplicationDbContext(
             ],
             cancellationToken: cancellationToken);
         await SaveChangesAsync(cancellationToken);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        new ProductEntityConfiguration().Configure(modelBuilder.Entity<Product>());
     }
 
     public async Task ApplyChangesAsync(CancellationToken cancellationToken = default)
