@@ -1,0 +1,15 @@
+﻿services:
+    postgres:
+        image: postgres:18.6-alpine3.24
+        container_name: postgres-container
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASS}
+            POSTGRES_DB: db_teisti
+        volumes:
+            -   type: bind
+                source: D:/Programs/Docker/Postgres
+                target: /var/lib/postgresql
+        ports:
+            - "5432:5432"
