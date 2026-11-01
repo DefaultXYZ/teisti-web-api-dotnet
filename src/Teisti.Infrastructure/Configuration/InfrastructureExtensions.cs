@@ -34,7 +34,13 @@ public static class InfrastructureExtensions
     {
         await using var scope = services.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.MigrateAsync();
+
+        // Avoid migration for integration tests
+        if (!dbContext.Database.IsInMemory())
+        {
+            await dbContext.Database.MigrateAsync();
+        }
+
         if (!await dbContext.Products.AnyAsync())
         {
             await dbContext.InitializeAsync();
