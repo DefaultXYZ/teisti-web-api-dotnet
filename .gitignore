@@ -214,3 +214,4 @@ FakesAssemblies/
 .claude/settings.local.json
 
 **/.env
+*.Local.json

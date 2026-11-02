@@ -5,6 +5,9 @@ using Teisti.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Local, git-ignored, environment settings
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true);
+
 builder.Services.AddOpenApi()
     .AddValidation()
     .AddInfrastructure(builder.Configuration)
