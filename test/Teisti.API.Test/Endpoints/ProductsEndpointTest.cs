@@ -6,46 +6,41 @@ using Teisti.API.Test.Configuration;
 
 namespace Teisti.API.Test.Endpoints;
 
-[TestClass]
-public class ProductsEndpointTest
+public sealed class ProductsEndpointTest : IAsyncLifetime
 {
-    private ApplicationFactory _factory = null!;
-    private HttpClient _client = null!;
+    private readonly ApplicationFactory _factory = new();
+    private HttpClient _client;
 
-    public TestContext TestContext { get; set; }
+    private static CancellationToken CancellationToken => TestContext.Current.CancellationToken;
 
-    [TestInitialize]
-    public void TestInitialize()
+    public async ValueTask InitializeAsync()
     {
-        _factory = new ApplicationFactory();
-        _client = _factory.CreateClient(
-            new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false
-            });
+        await _factory.InitializeAsync();
+        var clientOptions = new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        };
+        _client = _factory.CreateClient(clientOptions);
     }
 
-    [TestCleanup]
-    public void TestCleanup()
+    public async ValueTask DisposeAsync()
     {
         _client.Dispose();
-        _factory.Dispose();
+        await _factory.DisposeAsync();
     }
 
-    [TestMethod]
+    [Fact]
     public async Task GetAllProducts_OnApplicationInit_ShouldReturnTwo()
     {
         // Act
-        var products = await _client.GetFromJsonAsync<List<ProductResponse>>(
-            "products/",
-            TestContext.CancellationToken);
+        var products = await _client.GetFromJsonAsync<List<ProductResponse>>("products/", CancellationToken);
 
         // Assert
-        Assert.IsNotNull(products);
-        Assert.HasCount(2, products);
+        Assert.NotNull(products);
+        Assert.Equal(2, products.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task GetAllProducts_AfterPostNew_ShouldReturnThree()
     {
         // Arrange
@@ -59,16 +54,16 @@ public class ProductsEndpointTest
         var postMessage = await _client.PostAsync(
             "products/",
             requestContent,
-            TestContext.CancellationToken);
-        Assert.AreEqual(HttpStatusCode.Created, postMessage.StatusCode);
+            CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, postMessage.StatusCode);
 
         // Act
         var products = await _client.GetFromJsonAsync<List<ProductResponse>>(
             "products/",
-            TestContext.CancellationToken);
+            CancellationToken);
 
         // Assert
-        Assert.IsNotNull(products);
-        Assert.HasCount(3, products);
+        Assert.NotNull(products);
+        Assert.Equal(3, products.Count);
     }
 }
