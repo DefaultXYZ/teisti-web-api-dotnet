@@ -1,8 +1,8 @@
 using System.Net;
-using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Teisti.API.Models;
 using Teisti.API.Test.Configuration;
+using Teisti.Domain.Models;
 
 namespace Teisti.API.Test.Endpoints;
 
@@ -30,40 +30,50 @@ public sealed class ProductsEndpointTest : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetAllProducts_OnApplicationInit_ShouldReturnTwo()
+    public async Task GetAllProducts_OnSuccess_ShouldReturnList()
     {
+        // Arrange
+        var products = new List<Product>
+        {
+            new(Guid.NewGuid(), "Test1", 1.2m),
+            new(Guid.NewGuid(), "Test2", 2.3m),
+            new(Guid.NewGuid(), "Test3", 3.4m)
+        };
+        await _factory.ExecuteDbAction(async context =>
+        {
+            await context.Products.AddRangeAsync(products);
+        });
+
         // Act
-        var products = await _client.GetFromJsonAsync<List<ProductResponse>>("products/", CancellationToken);
+        var result = await _client.GetFromJsonAsync<List<ProductResponse>>("products/", CancellationToken);
 
         // Assert
-        Assert.NotNull(products);
-        Assert.Equal(2, products.Count);
+        Assert.NotNull(result);
+        Assert.Equal(products.Count, result.Count);
+        Assert.Equivalent(
+            products.Select(p => (p.Name, p.Price)),
+            result.Select(p => (p.Name, p.Price)));
     }
 
     [Fact]
-    public async Task GetAllProducts_AfterPostNew_ShouldReturnThree()
+    public async Task GetAllProducts_AfterPostNew_ShouldReturnList()
     {
         // Arrange
-        const string requestJson = """
-                                   {
-                                     "name": "Sushi",
-                                     "price": 42.01
-                                   }
-                                   """;
-        var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
-        var postMessage = await _client.PostAsync(
+        var postMessage = await _client.PostAsJsonAsync(
             "products/",
-            requestContent,
+            new { name = "Sushi", price = 42.01m },
             CancellationToken);
         Assert.Equal(HttpStatusCode.Created, postMessage.StatusCode);
 
         // Act
-        var products = await _client.GetFromJsonAsync<List<ProductResponse>>(
+        var result = await _client.GetFromJsonAsync<List<ProductResponse>>(
             "products/",
             CancellationToken);
 
         // Assert
-        Assert.NotNull(products);
-        Assert.Equal(3, products.Count);
+        Assert.NotNull(result);
+        var item = Assert.Single(result);
+        Assert.Equal("Sushi", item.Name);
+        Assert.Equal(42.01m, item.Price);
     }
 }

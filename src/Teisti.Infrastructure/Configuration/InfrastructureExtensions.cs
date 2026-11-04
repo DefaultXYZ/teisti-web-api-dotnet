@@ -40,10 +40,5 @@ public static class InfrastructureExtensions
         {
             await dbContext.Database.MigrateAsync();
         }
-
-        if (!await dbContext.Products.AnyAsync())
-        {
-            await dbContext.InitializeAsync();
-        }
     }
 }
