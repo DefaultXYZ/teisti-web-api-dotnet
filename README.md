@@ -32,3 +32,4 @@ Presents list of categorized food products to order.
     - Database migration.
     - Dotnet user-secrets.
 9. Docker Compose.
+10. Replace In-Memory Database with PostgreSQL on Testcontainers for API tests.
